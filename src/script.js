@@ -25,12 +25,12 @@ dracoLoader.setDecoderPath('/draco/')
 const gltfLoader = new GLTFLoader()
 gltfLoader.setDRACOLoader(dracoLoader)
 
+let mixer = null
+
 gltfLoader.load(
-    '/models/Duck/glTF-Draco/Duck.gltf',
+    '/models/Fox/glTF/Fox.gltf',
     (gltf) =>
     {
-        
-        
         //scene.add(gltf.scene.children[0])
 
         // use the below code when adding a group of shapes. that way i wont get a whole bunch of extra stuff loaded. may help performances.
@@ -40,6 +40,14 @@ gltfLoader.load(
         // {
         //     scene.add(child)
         // }
+        mixer = new THREE.AnimationMixer(gltf.scene)
+        const action = mixer.clipAction(gltf.animations[2])
+
+        action.play()
+
+        console.log(action)
+
+        gltf.scene.scale.set(0.025, 0.025, 0.025)
         scene.add(gltf.scene)
     },
 )
@@ -134,6 +142,12 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
     const deltaTime = elapsedTime - previousTime
     previousTime = elapsedTime
+
+    // Update Mixer
+    if(mixer !== null)
+    {
+        mixer.update(deltaTime)
+    }
 
     // Update controls
     controls.update()
